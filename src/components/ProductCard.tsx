@@ -28,7 +28,7 @@ export function ProductCard({
     <Card
       className={cn(
         "min-w-[280px] flex-shrink-0",
-        isWinner && "ring-2 ring-green-500 bg-green-50 dark:bg-green-950/20"
+        isWinner && "ring-2 ring-primary bg-primary/5 dark:bg-primary/10"
       )}
     >
       <CardHeader className="pb-4">
@@ -46,7 +46,7 @@ export function ProductCard({
           )}
         </div>
         {isWinner && (
-          <span className="text-xs font-semibold text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/50 px-2 py-1 rounded-full w-fit">
+          <span className="text-xs font-semibold text-primary-foreground bg-gradient-to-r from-primary to-secondary px-2 py-1 rounded-full w-fit">
             Best Value
           </span>
         )}
