@@ -1,6 +1,6 @@
 export function Footer() {
   return (
-    <footer className="mt-12 text-center text-sm text-muted-foreground">
+    <footer className="fixed bottom-0 left-0 right-0 py-4 text-center text-sm text-muted-foreground bg-background/80 backdrop-blur-sm">
       Made by{" "}
       <a
         href="https://spencerfrost.ca"
