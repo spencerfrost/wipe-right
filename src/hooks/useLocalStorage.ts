@@ -1,4 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+
+const STORAGE_CHANGE_EVENT = "localStorageChange";
 
 export function useLocalStorage<T>(
   key: string,
@@ -13,6 +15,14 @@ export function useLocalStorage<T>(
     }
   });
 
+  const setValue = useCallback((value: T | ((prev: T) => T)) => {
+    setStoredValue(prevValue => {
+      const newValue = typeof value === "function" ? (value as (prev: T) => T)(prevValue) : value;
+      window.dispatchEvent(new CustomEvent(STORAGE_CHANGE_EVENT, { detail: { key, value: newValue } }));
+      return newValue;
+    });
+  }, [key]);
+
   useEffect(() => {
     try {
       window.localStorage.setItem(key, JSON.stringify(storedValue));
@@ -21,5 +31,16 @@ export function useLocalStorage<T>(
     }
   }, [key, storedValue]);
 
-  return [storedValue, setStoredValue];
+  useEffect(() => {
+    const handleCustomStorageChange = (e: CustomEvent) => {
+      if (e.detail.key === key) {
+        setStoredValue(e.detail.value);
+      }
+    };
+
+    window.addEventListener(STORAGE_CHANGE_EVENT, handleCustomStorageChange as EventListener);
+    return () => window.removeEventListener(STORAGE_CHANGE_EVENT, handleCustomStorageChange as EventListener);
+  }, [key]);
+
+  return [storedValue, setValue];
 }

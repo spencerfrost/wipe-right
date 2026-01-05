@@ -2,15 +2,30 @@ import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Footer } from "@/components/Footer";
 import { ProductCard } from "@/components/ProductCard";
+import { MobileLayoutToggle } from "@/components/mobile/MobileLayoutToggle";
+import { ComparisonTable } from "@/components/mobile/ComparisonTable";
+import { ProductSheet } from "@/components/mobile/ProductSheet";
+import { AccordionCards } from "@/components/mobile/AccordionCards";
+import { SwipeableCards } from "@/components/mobile/SwipeableCards";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { useMobileLayout } from "@/hooks/useMobileLayout";
 import { createEmptyProduct, findWinner } from "@/lib/calculations";
 import type { Product } from "@/types";
-import logo from "@/assets/wipe-right-icon.png";
+import { Header } from "./components/Header";
 
 function App() {
   const [products, setProducts] = useLocalStorage<Product[]>(
     "wipe-right-products",
     [createEmptyProduct()]
+  );
+  const [mobileLayout] = useMobileLayout();
+  const [editingProductId, setEditingProductId] = useLocalStorage<string | null>(
+    "wipe-right-editing-product",
+    null
+  );
+  const [activeCardIndex, setActiveCardIndex] = useLocalStorage<number>(
+    "wipe-right-active-card-index",
+    0
   );
 
   const winnerId = findWinner(products);
@@ -27,40 +42,116 @@ function App() {
 
   const removeProduct = (id: string) => {
     if (products.length > 1) {
+      const indexToRemove = products.findIndex((p) => p.id === id);
       setProducts(products.filter((p) => p.id !== id));
+      
+      // Adjust active card index if necessary
+      if (activeCardIndex >= indexToRemove && activeCardIndex > 0) {
+        setActiveCardIndex(activeCardIndex - 1);
+      }
+    }
+  };
+
+  const editingProduct = editingProductId
+    ? products.find((p) => p.id === editingProductId) || null
+    : null;
+
+  const handleEditProduct = (id: string) => {
+    setEditingProductId(id);
+  };
+
+  const handleCloseSheet = () => {
+    setEditingProductId(null);
+  };
+
+  const handleDeleteFromSheet = () => {
+    if (editingProductId) {
+      removeProduct(editingProductId);
+      setEditingProductId(null);
+    }
+  };
+
+  // Mobile layout rendering
+  const renderMobileLayout = () => {
+    switch (mobileLayout) {
+      case "table":
+        return (
+          <>
+            <ComparisonTable
+              products={products}
+              winnerId={winnerId}
+              onEditProduct={handleEditProduct}
+              onAddProduct={addProduct}
+            />
+            <ProductSheet
+              product={editingProduct}
+              isOpen={editingProductId !== null}
+              onClose={handleCloseSheet}
+              onUpdate={(updates) => {
+                if (editingProductId) {
+                  updateProduct(editingProductId, updates);
+                }
+              }}
+              onDelete={handleDeleteFromSheet}
+              canDelete={products.length > 1}
+            />
+          </>
+        );
+
+      case "accordion":
+        return (
+          <AccordionCards
+            products={products}
+            winnerId={winnerId}
+            onUpdateProduct={updateProduct}
+            onRemoveProduct={removeProduct}
+            onAddProduct={addProduct}
+            canRemove={products.length > 1}
+          />
+        );
+
+      case "swipeable":
+        return (
+          <SwipeableCards
+            products={products}
+            winnerId={winnerId}
+            activeIndex={activeCardIndex}
+            onIndexChange={setActiveCardIndex}
+            onUpdateProduct={updateProduct}
+            onRemoveProduct={removeProduct}
+            onAddProduct={addProduct}
+            canRemove={products.length > 1}
+          />
+        );
+
+      default:
+        return null;
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-primary/5 to-background p-6">
-      <header className="text-center mb-8">
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-          Wipe Right
-        </h1>
-        <img src={logo} alt="Wipe Right" className="h-24 mx-auto mb-2" />
-        <p className="text-muted-foreground">
-          Find the best toilet paper value
-        </p>
-      </header>
+    <div className="flex flex-col min-h-screen bg-gradient-to-b from-primary/5 to-background md:p-6">
+      <Header />
 
-      <div className="flex gap-4 overflow-x-auto p-1 -m-1 pb-4">
-        {products.map((product) => (
-          <ProductCard
-            key={product.id}
-            product={product}
-            isWinner={product.id === winnerId}
-            onUpdate={(updates) => updateProduct(product.id, updates)}
-            onRemove={() => removeProduct(product.id)}
-            canRemove={products.length > 1}
-          />
-        ))}
+      {/* Desktop Layout */}
+      <div className="hidden md:flex">
+        <div className="flex gap-4 overflow-x-auto p-1 -m-1 pb-4">
+          {products.map((product) => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              isWinner={product.id === winnerId}
+              onUpdate={(updates) => updateProduct(product.id, updates)}
+              onRemove={() => removeProduct(product.id)}
+              canRemove={products.length > 1}
+            />
+          ))}
+        </div>
       </div>
 
-      <div className="mt-6 text-center">
-        <Button onClick={addProduct}>
-          <Plus className="size-4 mr-2" />
-          Add Product
-        </Button>
+      {/* Mobile Layout */}
+      <div className="md:hidden flex-1">
+        {renderMobileLayout()}
       </div>
 
       <Footer />
