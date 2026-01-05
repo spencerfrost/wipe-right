@@ -1,5 +1,6 @@
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Footer } from "@/components/Footer";
 import { ProductCard } from "@/components/ProductCard";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { createEmptyProduct, findWinner } from "@/lib/calculations";
@@ -61,6 +62,8 @@ function App() {
           Add Product
         </Button>
       </div>
+
+      <Footer />
     </div>
   );
 }
