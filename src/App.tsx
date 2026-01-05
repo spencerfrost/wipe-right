@@ -4,6 +4,7 @@ import { ProductCard } from "@/components/ProductCard";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { createEmptyProduct, findWinner } from "@/lib/calculations";
 import type { Product } from "@/types";
+import logo from "@/assets/wipe-right-icon.png";
 
 function App() {
   const [products, setProducts] = useLocalStorage<Product[]>(
@@ -32,7 +33,11 @@ function App() {
   return (
     <div className="min-h-screen bg-background p-6">
       <header className="text-center mb-8">
-        <h1 className="text-3xl font-bold">Wipe Right</h1>
+        <h1>
+          <span className="text-4xl font-bold text-primary">Wipe</span>
+          <span className="text-4xl font-bold text-secondary"> Right</span>
+        </h1>
+        <img src={logo} alt="Wipe Right" className="h-24 mx-auto mb-2" />
         <p className="text-muted-foreground">
           Find the best toilet paper value
         </p>
