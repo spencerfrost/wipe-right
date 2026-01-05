@@ -1,8 +1,5 @@
-import { Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Footer } from "@/components/Footer";
 import { ProductCard } from "@/components/ProductCard";
-import { MobileLayoutToggle } from "@/components/mobile/MobileLayoutToggle";
 import { ComparisonTable } from "@/components/mobile/ComparisonTable";
 import { ProductSheet } from "@/components/mobile/ProductSheet";
 import { AccordionCards } from "@/components/mobile/AccordionCards";
@@ -31,7 +28,9 @@ function App() {
   const winnerId = findWinner(products);
 
   const addProduct = () => {
-    setProducts([...products, createEmptyProduct()]);
+    const newProduct = createEmptyProduct();
+    setProducts([...products, newProduct]);
+    setEditingProductId(newProduct.id);
   };
 
   const updateProduct = (id: string, updates: Partial<Product>) => {

@@ -30,14 +30,14 @@ export function ProductSheet({
 
   return (
     <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <SheetContent side="bottom" className="max-h-[85vh] overflow-y-auto">
-        <SheetHeader>
+      <SheetContent side="bottom" className="gap-0 max-h-[85vh] overflow-y-auto">
+        <SheetHeader className="p-3">
           <SheetTitle>
             Editing: {product.name || "Unnamed Product"}
           </SheetTitle>
         </SheetHeader>
 
-        <div className="py-4">
+        <div className="p-3">
           <ProductInputForm
             product={product}
             onUpdate={onUpdate}
@@ -45,7 +45,7 @@ export function ProductSheet({
           />
         </div>
 
-        <SheetFooter className="flex-row gap-2">
+        <SheetFooter className="flex-row gap-2 px-3">
           {canDelete && (
             <Button
               variant="destructive"

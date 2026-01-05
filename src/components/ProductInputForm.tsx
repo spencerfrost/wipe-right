@@ -52,7 +52,7 @@ export function ProductInputForm({
           id={`rolls-${product.id}`}
           type="number"
           min="1"
-          placeholder="0"
+          placeholder="eg. 8"
           value={product.rolls}
           onChange={(e) => onUpdate({ rolls: e.target.value })}
         />
@@ -64,7 +64,7 @@ export function ProductInputForm({
           id={`sheets-${product.id}`}
           type="number"
           min="1"
-          placeholder="0"
+          placeholder="eg. 220"
           value={product.sheetsPerRoll}
           onChange={(e) => onUpdate({ sheetsPerRoll: e.target.value })}
         />
