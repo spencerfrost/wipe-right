@@ -31,11 +31,10 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-background p-6">
+    <div className="min-h-screen bg-gradient-to-b from-primary/5 to-background p-6">
       <header className="text-center mb-8">
-        <h1>
-          <span className="text-4xl font-bold text-primary">Wipe</span>
-          <span className="text-4xl font-bold text-secondary"> Right</span>
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+          Wipe Right
         </h1>
         <img src={logo} alt="Wipe Right" className="h-24 mx-auto mb-2" />
         <p className="text-muted-foreground">
@@ -43,7 +42,7 @@ function App() {
         </p>
       </header>
 
-      <div className="flex gap-4 overflow-x-auto pb-4">
+      <div className="flex gap-4 overflow-x-auto p-1 -m-1 pb-4">
         {products.map((product) => (
           <ProductCard
             key={product.id}
