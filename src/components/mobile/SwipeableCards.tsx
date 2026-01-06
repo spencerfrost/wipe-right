@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { StickyComparison } from "@/components/mobile/StickyComparison";
 import { cn } from "@/lib/utils";
 import { calculateMetrics } from "@/lib/calculations";
+import { UrlImportSection } from "@/components/UrlImportSection";
 import { ProductFormFields } from "@/components/ProductFormFields";
 import { MetricsDisplay } from "@/components/MetricsDisplay";
 import type { Product } from "@/types";
@@ -94,6 +95,11 @@ export function SwipeableCards({
                 )}
               >
                 <CardHeader>
+                  <UrlImportSection
+                    onProductDataParsed={(data) => onUpdateProduct(product.id, data)}
+                    placeholder="Paste Amazon, Walmart, or product URL..."
+                  />
+
                   <div className="flex justify-between items-start gap-2">
                     <Input
                       placeholder={`Product ${index + 1}`}
@@ -121,8 +127,8 @@ export function SwipeableCards({
                     onUpdate={(updates) => onUpdateProduct(product.id, updates)}
                     compact={true}
                     showSheetSize={true}
-                    collapsibleSheetSize={false}
-                    showUnitToggles={false}
+                    collapsibleSheetSize={true}
+                    showUnitToggles={true}
                   />
 
                   <MetricsDisplay metrics={metrics} isWinner={isWinner} compact={true} />
