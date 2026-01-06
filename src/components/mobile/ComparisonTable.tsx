@@ -23,16 +23,16 @@ export function ComparisonTable({
         <table className="w-full min-w-max border-collapse">
           <thead>
             <tr>
-              <th className="sticky left-0 bg-background border-b border-r p-3 text-left text-sm font-medium text-muted-foreground">
+              <th className="sticky left-0 bg-background border-b border-r p-2 text-left text-sm font-medium text-muted-foreground">
                 Product
               </th>
-              <th className="border-b p-3 text-left min-w-[120px] text-sm font-medium text-muted-foreground">
+              <th className="border-b p-2 text-left min-w-[120px] text-sm font-medium text-muted-foreground">
                 Per 100 Sheets
               </th>
-              <th className="border-b p-3 text-left min-w-[120px] text-sm font-medium text-muted-foreground">
+              <th className="border-b p-2 text-left min-w-[120px] text-sm font-medium text-muted-foreground">
                 Price
               </th>
-              <th className="border-b p-3 text-left min-w-[120px] text-sm font-medium text-muted-foreground">
+              <th className="border-b p-2 text-left min-w-[120px] text-sm font-medium text-muted-foreground">
                 Per Sq Ft
               </th>
             </tr>
@@ -45,15 +45,15 @@ export function ComparisonTable({
               return (
                 <tr key={product.id}>
                   <td className={cn(
-                    "sticky left-0 bg-background border-b border-r p-3 text-left",
+                    "sticky left-0 bg-background border-b border-r p-2 text-left text-md",
                     isWinner && "bg-primary/10"
                   )}>
                     <div className="flex items-center justify-between gap-2">
                       <span className="font-semibold text-foreground">
-                        {product.name || "Product"}
+                        {((product.name || "Product").length > 20 ? (product.name || "Product").slice(0,16) + "..." : (product.name || "Product"))}
                       </span>
                         <Button
-                        variant="outline"
+                        variant="ghost"
                         size="sm"
                         onClick={() => onEditProduct(product.id)}
                         >
@@ -62,7 +62,7 @@ export function ComparisonTable({
                     </div>
                   </td>
                   <td className={cn(
-                    "border-b p-3",
+                    "border-b p-2",
                     isWinner && "bg-primary/10 ring-2 ring-inset ring-primary"
                   )}>
                     <span className={cn(
@@ -75,7 +75,7 @@ export function ComparisonTable({
                     </span>
                   </td>
                   <td className={cn(
-                    "border-b p-3",
+                    "border-b p-2",
                     isWinner && "bg-primary/10"
                   )}>
                     <span className="font-medium">
@@ -85,7 +85,7 @@ export function ComparisonTable({
                     </span>
                   </td>
                   <td className={cn(
-                    "border-b p-3",
+                    "border-b p-2",
                     isWinner && "bg-primary/10"
                   )}>
                     <span className="font-medium">
