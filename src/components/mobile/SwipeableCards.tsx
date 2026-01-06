@@ -1,6 +1,6 @@
 import { useRef } from "react";
-import { Plus, X } from "lucide-react";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Plus, Trash, X } from "lucide-react";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { StickyComparison } from "@/components/mobile/StickyComparison";
@@ -62,7 +62,7 @@ export function SwipeableCards({
       <Swiper
         modules={[Pagination]}
         spaceBetween={4}
-        slidesPerView={1.2}
+        slidesPerView={1.25}
         centeredSlides={true}
         initialSlide={activeIndex}
         pagination={{
@@ -109,15 +109,6 @@ export function SwipeableCards({
                       }
                       className="font-semibold"
                     />
-                    {canRemove && (
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => onRemoveProduct(product.id)}
-                      >
-                        <X className="size-4" />
-                      </Button>
-                    )}
                   </div>
                 </CardHeader>
 
@@ -133,20 +124,31 @@ export function SwipeableCards({
 
                   <MetricsDisplay metrics={metrics} isWinner={isWinner} compact={true} />
                 </CardContent>
+                {canRemove && (
+                  <CardFooter className="pt-0">
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      className="w-full"
+                      onClick={() => onRemoveProduct(product.id)}
+                    >
+                      <Trash className="size-4 mr-2" />
+                      Remove Product
+                    </Button>
+                  </CardFooter>
+                )}
               </Card>
             </SwiperSlide>
           );
         })}
       </Swiper>
 
-      {/* Floating Add button */}
-      <Button
-        onClick={onAddProduct}
-        size="icon"
-        className="fixed bottom-6 right-6 size-14 rounded-full shadow-lg"
-      >
-        <Plus className="size-6" />
-      </Button>
+      <div className="flex justify-center mt-4">
+        <Button variant="ghost" onClick={onAddProduct} disabled={products.length >= 10}>
+          <Plus className="size-4 mr-2" />
+          Add Product
+        </Button>
+      </div>
     </div>
   );
 }

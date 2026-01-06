@@ -30,7 +30,7 @@ export function StickyComparison({
                 key={product.id}
                 onClick={() => onSelectProduct(index)}
                 className={cn(
-                  "flex flex-col items-center px-4 py-2 rounded-lg transition-all min-w-[100px] relative",
+                  "flex flex-col items-center px-4 py-2 rounded-lg transition-all min-w-[128px] relative",
                   "hover:bg-accent",
                   isWinner && "bg-primary/5",
                   isActive && "ring-2 ring-primary scale-105",
