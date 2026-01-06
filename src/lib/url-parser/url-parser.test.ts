@@ -40,6 +40,47 @@ describe("URL Parser", () => {
         // Network errors are acceptable in CI
       }
     }, 30000);
+
+    it("ignores typical Walmart anti-bot product name", async () => {
+      const { parseWalmart } = await import("./parsers/walmart");
+      const nextData = {
+        props: {
+          pageProps: {
+            initialData: {
+              data: {
+                product: {
+                  name: "We like real shoppers, not robots!",
+                  priceInfo: { price: 12.5 },
+                  shortDescription: "12 Mega Rolls",
+                },
+              },
+            },
+          },
+        },
+      };
+      const html = `<script id="__NEXT_DATA__">${JSON.stringify(nextData)}</script>`;
+
+      const result = parseWalmart(html);
+
+      // We should not expose anti-bot placeholder strings as product names in the UI
+      expect(result.name).not.toBe("We like real shoppers, not robots!");
+      // In this contrived example, generic parsing won't find a better name, so it may be undefined
+      expect(result.name).toBeUndefined();
+      // Price should still be extracted
+      expect(result.price).toBe(12.5);
+    });
+
+    it("reports friendly error when retailer blocks automated access", async () => {
+      const url = "https://www.walmart.ca/en/ip/fake-product";
+      const html = "<html><body>We like real shoppers, not robots!</body></html>";
+      const fetcher = await import("./fetcher");
+      vi.spyOn(fetcher, "fetchWithCorsProxy").mockResolvedValue(html as any);
+
+      const result = await parseProductUrl(url);
+
+      expect(result.success).toBe(false);
+      expect(result.error).toContain("blocked automated access");
+    });
   });
 
   describe("extractToiletPaperInfo", () => {

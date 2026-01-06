@@ -20,8 +20,14 @@ function getNestedValue(obj: unknown, path: string[]): unknown {
  * Parse Walmart product page HTML
  * Walmart uses Next.js which embeds product data in __NEXT_DATA__ script
  */
+function isAntiBotName(name: string): boolean {
+  const lower = name.toLowerCase();
+  // Detect common anti-bot / captcha placeholder messages
+  return /real shoppers|not robots|captcha|\b(bot|robot)\b/i.test(lower);
+}
+
 export function parseWalmart(html: string): ParsedProductData {
-  const data: ParsedProductData = {};
+  const data: ParsedProductData = {}; 
 
   // Try to extract __NEXT_DATA__ JSON
   const nextDataMatch = html.match(/<script id="__NEXT_DATA__"[^>]*>([\s\S]*?)<\/script>/);
@@ -49,11 +55,17 @@ export function parseWalmart(html: string): ParsedProductData {
       if (product) {
         // Product name
         if (typeof product.name === "string") {
-          data.name = product.name;
+          const pname = product.name.trim();
+          if (!isAntiBotName(pname)) {
+            data.name = pname;
+          } else {
+            // Detected an anti-bot placeholder name (e.g., "We like real shoppers, not robots!").
+            // Skip using it so the app doesn't display confusing messages to users.
+          }
         }
 
         // Price - check various locations
-        const priceInfo = product.priceInfo as Record<string, unknown> | undefined;
+        const priceInfo = product.priceInfo as Record<string, unknown> | undefined; 
         if (priceInfo) {
           const currentPrice = priceInfo.currentPrice as Record<string, unknown> | undefined;
           if (currentPrice && typeof currentPrice.price === "number") {
@@ -101,9 +113,33 @@ export function parseWalmart(html: string): ParsedProductData {
     }
   }
 
-  // If we didn't get useful data from __NEXT_DATA__, try generic parsing
+  // If we didn't get a usable name from __NEXT_DATA__ (or it was rejected as anti-bot),
+  // try generic parsing to fill in missing fields (name, price, and toilet paper info).
+  if (!data.name) {
+    const generic = parseGeneric(html);
+    if (generic.name && !isAntiBotName(generic.name)) data.name = generic.name;
+    if (!data.price && generic.price) data.price = generic.price;
+    if (!data.rolls && generic.rolls) data.rolls = generic.rolls;
+    if (!data.sheetsPerRoll && generic.sheetsPerRoll) data.sheetsPerRoll = generic.sheetsPerRoll;
+    if (!data.sheetWidth && generic.sheetWidth) data.sheetWidth = generic.sheetWidth;
+    if (!data.sheetHeight && generic.sheetHeight) data.sheetHeight = generic.sheetHeight;
+  }
+
+  // If we still don't have any useful data, try generic parsing but be careful
+  // not to expose anti-bot placeholder names directly. If generic parsing only
+  // yields an anti-bot name, treat it as no data.
   if (!data.name && !data.price) {
-    return parseGeneric(html);
+    const generic = parseGeneric(html);
+    if (generic.name && isAntiBotName(generic.name)) {
+      // don't expose the anti-bot name
+      generic.name = undefined;
+    }
+    const hasFields = Object.keys(generic).some(
+      (k) => generic[k as keyof typeof generic] !== undefined
+    );
+    if (hasFields) return generic;
+
+    return {};
   }
 
   return data;

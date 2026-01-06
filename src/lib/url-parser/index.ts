@@ -1,6 +1,6 @@
 import type { ParseResult, ParsedProductData } from "./types";
 import { fetchWithCorsProxy } from "./fetcher";
-import { getRetailerType, parseHtml } from "./parsers";
+import { getRetailerType, parseHtml, containsAntiBotHtml } from "./parsers";
 
 /**
  * Validate URL format
@@ -68,8 +68,19 @@ export async function parseProductUrl(url: string): Promise<ParseResult> {
     // Fetch HTML via CORS proxy
     const html = await fetchWithCorsProxy(url);
 
-    // Determine retailer and parse
+    // Determine retailer and detect bot-protection pages
     const retailerType = getRetailerType(url);
+
+    if (containsAntiBotHtml(html)) {
+      return {
+        success: false,
+        data: {},
+        warnings: [],
+        error:
+          "This retailer appears to have blocked automated access (bot protection). Try again later or paste product details manually.",
+      };
+    }
+
     const data = parseHtml(html, retailerType);
 
     // Check if we got any useful data

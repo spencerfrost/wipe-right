@@ -18,6 +18,15 @@ export function getRetailerType(url: string): RetailerType {
 }
 
 /**
+ * Detect common anti-bot / captcha pages from retailer HTML
+ */
+export function containsAntiBotHtml(html: string): boolean {
+  if (!html) return false;
+  const lower = html.toLowerCase();
+  return /we like real shoppers|not robots|captcha|verify you are a human|please verify|enter the characters|are you human|are you a human/i.test(lower);
+}
+
+/**
  * Parse HTML using the appropriate retailer-specific parser
  */
 export function parseHtml(html: string, retailerType: RetailerType): ParsedProductData {
