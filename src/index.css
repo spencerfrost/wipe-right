@@ -62,7 +62,8 @@
   --muted-foreground: oklch(0.556 0 0);
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
+  /* softened destructive red to better match the cool palette */
+  --destructive: oklch(0.62 0.16 26.5);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   /* sky-400 for ring */
@@ -101,7 +102,8 @@
   --muted-foreground: oklch(0.708 0 0);
   --accent: oklch(0.269 0 0);
   --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
+  /* softened destructive red in dark mode */
+  --destructive: oklch(0.68 0.12 22.0);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   /* sky-400 for ring */
