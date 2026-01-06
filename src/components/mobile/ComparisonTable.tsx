@@ -50,7 +50,7 @@ export function ComparisonTable({
                   )}>
                     <div className="flex items-center justify-between gap-2">
                       <span className="font-semibold text-foreground">
-                        {((product.name || "Product").length > 20 ? (product.name || "Product").slice(0,16) + "..." : (product.name || "Product"))}
+                        {((product.name || "-").length > 20 ? (product.name || "-").slice(0,16) + "..." : (product.name || "-"))}
                       </span>
                         <Button
                         variant="ghost"
