@@ -1,3 +1,5 @@
+export type SheetUnit = "in" | "cm";
+
 export interface Product {
   id: string;
   name: string;
@@ -6,6 +8,7 @@ export interface Product {
   sheetsPerRoll: string;
   sheetWidth: string;
   sheetHeight: string;
+  sheetUnit: SheetUnit;
 }
 
 export interface CalculatedMetrics {

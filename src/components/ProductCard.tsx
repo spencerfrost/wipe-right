@@ -1,10 +1,17 @@
-import { X } from "lucide-react";
+import { useState } from "react";
+import { X, Link, ChevronDown, Loader2, Download } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
 import { calculateMetrics } from "@/lib/calculations";
+import { parseProductUrl } from "@/lib/url-parser";
 import type { Product } from "@/types";
 
 interface ProductCardProps {
@@ -23,6 +30,45 @@ export function ProductCard({
   canRemove,
 }: ProductCardProps) {
   const metrics = calculateMetrics(product);
+  const [urlInput, setUrlInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [parseError, setParseError] = useState<string | null>(null);
+  const [parseWarnings, setParseWarnings] = useState<string[]>([]);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleParseUrl = async () => {
+    setIsLoading(true);
+    setParseError(null);
+    setParseWarnings([]);
+
+    try {
+      const result = await parseProductUrl(urlInput);
+
+      if (!result.success) {
+        setParseError(result.error || "Failed to parse URL");
+        return;
+      }
+
+      const updates: Partial<Product> = {};
+      if (result.data.name) updates.name = result.data.name;
+      if (result.data.price) updates.price = result.data.price.toString();
+      if (result.data.rolls) updates.rolls = result.data.rolls.toString();
+      if (result.data.sheetsPerRoll)
+        updates.sheetsPerRoll = result.data.sheetsPerRoll.toString();
+      if (result.data.sheetWidth)
+        updates.sheetWidth = result.data.sheetWidth.toString();
+      if (result.data.sheetHeight)
+        updates.sheetHeight = result.data.sheetHeight.toString();
+
+      onUpdate(updates);
+      setParseWarnings(result.warnings);
+      setUrlInput("");
+    } catch (err) {
+      setParseError(err instanceof Error ? err.message : "Unknown error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <Card
@@ -32,6 +78,61 @@ export function ProductCard({
       )}
     >
       <CardHeader className="pb-4">
+        <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+          <CollapsibleTrigger asChild>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="w-full justify-between text-muted-foreground hover:text-foreground mb-2"
+            >
+              <span className="flex items-center gap-2">
+                <Link className="size-4" />
+                Import from URL
+              </span>
+              <ChevronDown
+                className={`size-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
+              />
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <div className="pb-2 space-y-2">
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Paste product URL..."
+                  value={urlInput}
+                  onChange={(e) => setUrlInput(e.target.value)}
+                  disabled={isLoading}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && urlInput.trim() && !isLoading) {
+                      handleParseUrl();
+                    }
+                  }}
+                />
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={handleParseUrl}
+                  disabled={isLoading || !urlInput.trim()}
+                >
+                  {isLoading ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : (
+                    <Download className="size-4" />
+                  )}
+                </Button>
+              </div>
+              {parseError && (
+                <p className="text-sm text-destructive">{parseError}</p>
+              )}
+              {parseWarnings.length > 0 && (
+                <p className="text-sm text-amber-600 dark:text-amber-500">
+                  {parseWarnings.join(" ")}
+                </p>
+              )}
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+
         <div className="flex justify-between items-start gap-2">
           <Input
             placeholder="Product Name"

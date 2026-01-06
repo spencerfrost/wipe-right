@@ -1,11 +1,19 @@
 import type { Product, CalculatedMetrics } from "@/types";
 
+const CM_TO_INCHES = 0.393701;
+
 export function calculateMetrics(product: Product): CalculatedMetrics {
   const price = parseFloat(product.price);
   const rolls = parseFloat(product.rolls);
   const sheetsPerRoll = parseFloat(product.sheetsPerRoll);
-  const width = parseFloat(product.sheetWidth);
-  const height = parseFloat(product.sheetHeight);
+  let width = parseFloat(product.sheetWidth);
+  let height = parseFloat(product.sheetHeight);
+
+  // Convert cm to inches if needed
+  if (product.sheetUnit === "cm") {
+    width *= CM_TO_INCHES;
+    height *= CM_TO_INCHES;
+  }
 
   const totalSheets = rolls * sheetsPerRoll;
 
@@ -13,7 +21,7 @@ export function calculateMetrics(product: Product): CalculatedMetrics {
   const pricePer100Sheets =
     price > 0 && totalSheets > 0 ? (price / totalSheets) * 100 : null;
 
-  // Square footage calculation (convert inches to feet)
+  // Square footage calculation (width/height are now in inches)
   const sqFtPerSheet =
     width > 0 && height > 0 ? (width / 12) * (height / 12) : null;
 
@@ -53,5 +61,6 @@ export function createEmptyProduct(): Product {
     sheetsPerRoll: "",
     sheetWidth: "",
     sheetHeight: "",
+    sheetUnit: "in",
   };
 }
