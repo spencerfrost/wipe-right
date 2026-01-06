@@ -12,6 +12,7 @@ describe("calculateMetrics", () => {
       sheetsPerRoll: "200",
       sheetWidth: "4",
       sheetHeight: "4",
+      sheetUnit: "in",
     };
 
     const metrics = calculateMetrics(product);
@@ -31,6 +32,7 @@ describe("calculateMetrics", () => {
       sheetsPerRoll: "200",
       sheetWidth: "4",
       sheetHeight: "4",
+      sheetUnit: "in",
     };
 
     const metrics = calculateMetrics(product);
@@ -50,6 +52,7 @@ describe("calculateMetrics", () => {
       sheetsPerRoll: "",
       sheetWidth: "",
       sheetHeight: "",
+      sheetUnit: "in",
     };
 
     const metrics = calculateMetrics(product);
@@ -68,6 +71,7 @@ describe("calculateMetrics", () => {
       sheetsPerRoll: "200",
       sheetWidth: "4",
       sheetHeight: "4",
+      sheetUnit: "in",
     };
 
     const metrics = calculateMetrics(product);
@@ -88,6 +92,7 @@ describe("findWinner", () => {
         sheetsPerRoll: "200",
         sheetWidth: "4",
         sheetHeight: "4",
+        sheetUnit: "in",
       },
       {
         id: "cheap",
@@ -97,6 +102,7 @@ describe("findWinner", () => {
         sheetsPerRoll: "200",
         sheetWidth: "4",
         sheetHeight: "4",
+        sheetUnit: "in",
       },
     ];
 
@@ -113,6 +119,7 @@ describe("findWinner", () => {
         sheetsPerRoll: "200",
         sheetWidth: "4",
         sheetHeight: "4",
+        sheetUnit: "in",
       },
     ];
 

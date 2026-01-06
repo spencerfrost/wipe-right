@@ -1,12 +1,13 @@
-import { useEffect, useState, useRef } from "react";
+import { useRef } from "react";
 import { Plus, X } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { StickyComparison } from "@/components/mobile/StickyComparison";
 import { cn } from "@/lib/utils";
 import { calculateMetrics } from "@/lib/calculations";
+import { ProductFormFields } from "@/components/ProductFormFields";
+import { MetricsDisplay } from "@/components/MetricsDisplay";
 import type { Product } from "@/types";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper/modules';
@@ -26,32 +27,21 @@ interface SwipeableCardsProps {
 export function SwipeableCards({
   products,
   winnerId,
-  activeIndex: initialActiveIndex,
+  activeIndex,
   onIndexChange,
   onUpdateProduct,
   onRemoveProduct,
   onAddProduct,
   canRemove,
 }: SwipeableCardsProps) {
-  const [activeIndex, setActiveIndex] = useState(initialActiveIndex);
   const swiperRef = useRef<any>(null);
-
-  // Update local activeIndex when prop changes
-  useEffect(() => {
-    setActiveIndex(initialActiveIndex);
-    if (swiperRef.current) {
-      swiperRef.current.slideTo(initialActiveIndex);
-    }
-  }, [initialActiveIndex]);
 
   const handleSlideChange = (swiper: any) => {
     const newIndex = swiper.activeIndex;
-    setActiveIndex(newIndex);
     onIndexChange(newIndex);
   };
 
   const handleSelectProduct = (index: number) => {
-    setActiveIndex(index);
     onIndexChange(index);
     if (swiperRef.current) {
       swiperRef.current.slideTo(index);
@@ -126,102 +116,16 @@ export function SwipeableCards({
                 </CardHeader>
 
                 <CardContent className="space-y-4">
-                  <div>
-                    <Label htmlFor={`price-${product.id}`}>Price ($)</Label>
-                    <Input
-                      id={`price-${product.id}`}
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      placeholder="0.00"
-                      value={product.price}
-                      onChange={(e) =>
-                        onUpdateProduct(product.id, { price: e.target.value })
-                      }
-                    />
-                  </div>
+                  <ProductFormFields
+                    product={product}
+                    onUpdate={(updates) => onUpdateProduct(product.id, updates)}
+                    compact={true}
+                    showSheetSize={true}
+                    collapsibleSheetSize={false}
+                    showUnitToggles={false}
+                  />
 
-                  <div>
-                    <Label htmlFor={`rolls-${product.id}`}>Number of Rolls</Label>
-                    <Input
-                      id={`rolls-${product.id}`}
-                      type="number"
-                      min="1"
-                      placeholder="0"
-                      value={product.rolls}
-                      onChange={(e) =>
-                        onUpdateProduct(product.id, { rolls: e.target.value })
-                      }
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor={`sheets-${product.id}`}>Sheets per Roll</Label>
-                    <Input
-                      id={`sheets-${product.id}`}
-                      type="number"
-                      min="1"
-                      placeholder="0"
-                      value={product.sheetsPerRoll}
-                      onChange={(e) =>
-                        onUpdateProduct(product.id, { sheetsPerRoll: e.target.value })
-                      }
-                    />
-                  </div>
-
-                  <div>
-                    <Label>Sheet Size (inches)</Label>
-                    <div className="flex gap-2 items-center">
-                      <Input
-                        type="number"
-                        step="0.1"
-                        min="0"
-                        placeholder="Width"
-                        value={product.sheetWidth}
-                        onChange={(e) =>
-                          onUpdateProduct(product.id, { sheetWidth: e.target.value })
-                        }
-                      />
-                      <span className="text-muted-foreground">x</span>
-                      <Input
-                        type="number"
-                        step="0.1"
-                        min="0"
-                        placeholder="Height"
-                        value={product.sheetHeight}
-                        onChange={(e) =>
-                          onUpdateProduct(product.id, { sheetHeight: e.target.value })
-                        }
-                      />
-                    </div>
-                  </div>
-
-                  <div className="pt-4 border-t space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-sm text-muted-foreground">Total Sheets</span>
-                      <span className="font-medium">
-                        {metrics.totalSheets > 0
-                          ? metrics.totalSheets.toLocaleString()
-                          : "-"}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-sm text-muted-foreground">Per 100 Sheets</span>
-                      <span className="font-semibold text-lg">
-                        {metrics.pricePer100Sheets !== null
-                          ? `$${metrics.pricePer100Sheets.toFixed(2)}`
-                          : "-"}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-sm text-muted-foreground">Per Sq Ft</span>
-                      <span className="font-medium">
-                        {metrics.pricePerSqFt !== null
-                          ? `$${metrics.pricePerSqFt.toFixed(3)}`
-                          : "-"}
-                      </span>
-                    </div>
-                  </div>
+                  <MetricsDisplay metrics={metrics} isWinner={isWinner} compact={true} />
                 </CardContent>
               </Card>
             </SwiperSlide>
