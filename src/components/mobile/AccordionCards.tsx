@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronRight, ChevronDown, Plus } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,7 @@ interface AccordionCardsProps {
   onUpdateProduct: (id: string, updates: Partial<Product>) => void;
   onRemoveProduct: (id: string) => void;
   onAddProduct: () => void;
-  canRemove: boolean;
+  editingProductId?: string | null;
 }
 
 export function AccordionCards({
@@ -26,13 +26,22 @@ export function AccordionCards({
   onUpdateProduct,
   onRemoveProduct,
   onAddProduct,
-  canRemove,
+  editingProductId,
 }: AccordionCardsProps) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const handleOpenChange = (id: string, open: boolean) => {
     setExpandedId(open ? id : null);
   };
+
+  useEffect(() => {
+    if (editingProductId) {
+      const exists = products.some((p) => p.id === editingProductId);
+      if (exists) {
+        setExpandedId(editingProductId);
+      }
+    }
+  }, [editingProductId, products]);
 
   return (
     <div className="space-y-3">
@@ -81,7 +90,6 @@ export function AccordionCards({
                     product={product}
                     onUpdate={(updates) => onUpdateProduct(product.id, updates)}
                     onDelete={() => onRemoveProduct(product.id)}
-                    canDelete={canRemove}
                   />
                 </CardContent>
               </CollapsibleContent>

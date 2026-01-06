@@ -15,7 +15,6 @@ interface ProductSheetProps {
   onClose: () => void;
   onUpdate: (updates: Partial<Product>) => void;
   onDelete: () => void;
-  canDelete: boolean;
 }
 
 export function ProductSheet({
@@ -24,7 +23,6 @@ export function ProductSheet({
   onClose,
   onUpdate,
   onDelete,
-  canDelete,
 }: ProductSheetProps) {
   if (!product) return null;
 
@@ -41,12 +39,10 @@ export function ProductSheet({
           <ProductInputForm
             product={product}
             onUpdate={onUpdate}
-            canDelete={false}
           />
         </div>
 
         <SheetFooter className="flex-row gap-2 px-3">
-          {canDelete && (
             <Button
               variant="destructive"
               onClick={() => {
@@ -57,7 +53,6 @@ export function ProductSheet({
             >
               Delete
             </Button>
-          )}
           <Button onClick={onClose} className="flex-1">
             Done
           </Button>

@@ -1,4 +1,4 @@
-import { X } from "lucide-react";
+import { Trash, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { UrlImportSection } from "@/components/UrlImportSection";
@@ -9,14 +9,12 @@ interface ProductInputFormProps {
   product: Product;
   onUpdate: (updates: Partial<Product>) => void;
   onDelete?: () => void;
-  canDelete: boolean;
 }
 
 export function ProductInputForm({
   product,
   onUpdate,
   onDelete,
-  canDelete,
 }: ProductInputFormProps) {
   return (
     <div className="space-y-4">
@@ -32,11 +30,6 @@ export function ProductInputForm({
           onChange={(e) => onUpdate({ name: e.target.value })}
           className="font-semibold"
         />
-        {canDelete && onDelete && (
-          <Button variant="ghost" size="icon" onClick={onDelete}>
-            <X className="size-4" />
-          </Button>
-        )}
       </div>
 
       <ProductFormFields
@@ -46,6 +39,12 @@ export function ProductInputForm({
         collapsibleSheetSize={true}
         showUnitToggles={true}
       />
+      {onDelete && (
+        <Button variant="destructive" size="sm" onClick={onDelete} className="w-full">
+          <Trash className="size-4 mr-2" />
+          Delete Product
+        </Button>
+      )}
     </div>
   );
 }

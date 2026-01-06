@@ -1,5 +1,5 @@
-import { X } from "lucide-react";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Trash, X } from "lucide-react";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -14,7 +14,6 @@ interface ProductCardProps {
   isWinner: boolean;
   onUpdate: (updates: Partial<Product>) => void;
   onRemove: () => void;
-  canRemove: boolean;
 }
 
 export function ProductCard({
@@ -22,7 +21,6 @@ export function ProductCard({
   isWinner,
   onUpdate,
   onRemove,
-  canRemove,
 }: ProductCardProps) {
   return (
     <Card
@@ -41,11 +39,9 @@ export function ProductCard({
             onChange={(e) => onUpdate({ name: e.target.value })}
             className="font-semibold"
           />
-          {canRemove && (
-            <Button variant="ghost" size="icon" onClick={onRemove}>
-              <X className="size-4" />
-            </Button>
-          )}
+          <Button variant="ghost" size="icon" onClick={onRemove}>
+            <X className="size-4" />
+          </Button>
         </div>
         {isWinner && (
           <span className="text-xs font-semibold text-primary-foreground bg-gradient-to-r from-primary to-secondary px-2 py-1 rounded-full w-fit">
@@ -65,6 +61,12 @@ export function ProductCard({
 
         <MetricsDisplay metrics={calculateMetrics(product)} isWinner={isWinner} />
       </CardContent>
+      <CardFooter className="pt-0">
+        <Button variant="destructive" size="sm" onClick={onRemove}>
+          <Trash className="size-4 mr-2" />
+          Remove Product
+        </Button>
+      </CardFooter>
     </Card>
   );
 }
