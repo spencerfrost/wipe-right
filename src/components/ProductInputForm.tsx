@@ -1,4 +1,4 @@
-import { Trash, X } from "lucide-react";
+import { Trash } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { UrlImportSection } from "@/components/UrlImportSection";

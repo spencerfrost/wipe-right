@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { Plus, Trash, X } from "lucide-react";
+import { Plus, Trash } from "lucide-react";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
